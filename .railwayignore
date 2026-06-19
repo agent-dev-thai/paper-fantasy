@@ -1,0 +1,11 @@
+# Deploy needs the playable game plus the art-evolution page.
+Paper Fantasy.html
+agentic-dev-imagegen-pipeline-post.md
+versions/
+
+# Reference/source assets kept in git but not needed for Railway runtime/content pages.
+assets/archive/
+assets/imagegen-sources/
+assets/*.svg
+assets/paper-fantasy-logo-base.png
+assets/final-exam-dragon.png

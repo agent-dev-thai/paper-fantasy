@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Final Exam dragon sketch">
+  <defs>
+    <filter id="ink-wobble" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.021" numOctaves="2" seed="27" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.8" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <style>
+      .g { stroke: #3b3a40; }
+      .r { stroke: #b5331f; }
+      .b { stroke: #2c3f8c; }
+      .p { fill: #f2ecda; }
+      .line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .soft { opacity: .34; }
+    </style>
+  </defs>
+
+  <g filter="url(#ink-wobble)" class="line">
+    <path class="g soft" stroke-width="3" d="M88 355c51 32 117 47 196 41 56-4 103-21 142-50"/>
+    <path class="g" stroke-width="6" d="M159 281c10-58 55-98 114-94 56 4 94 43 104 96 5 30-5 65-30 88-29 27-83 33-130 17-42-15-66-52-58-107z"/>
+    <path class="g soft" stroke-width="3.5" d="M172 286c13-47 50-78 101-75 47 3 80 33 90 78 7 32-5 59-26 78-24 21-71 28-113 12-37-14-58-46-52-93z"/>
+
+    <path class="g" stroke-width="7" d="M197 204c-23-37-48-66-77-86M306 202c23-38 52-67 87-86"/>
+    <path class="r" stroke-width="5" d="M125 115c28 10 48 24 61 43M389 113c-30 12-52 27-66 45"/>
+    <path class="g" stroke-width="5" d="M188 182c-18-24-43-42-76-55M321 181c22-28 50-45 85-52"/>
+
+    <path class="g" stroke-width="6" d="M169 274c-42-27-86-34-133-20 33 12 62 29 88 51-25 7-46 20-64 38 42 1 77-9 105-30"/>
+    <path class="g" stroke-width="6" d="M374 274c40-26 82-32 126-16-31 11-59 27-84 49 22 8 41 20 57 37-38 0-70-10-99-31"/>
+    <path class="g soft" stroke-width="3" d="M68 258c26 13 50 29 73 47M454 262c-27 12-50 28-70 46"/>
+
+    <path class="g" stroke-width="6" d="M211 258c-12 35-21 74-27 116M294 258c16 38 25 79 26 123"/>
+    <path class="b" stroke-width="4" d="M178 374c-25 28-52 44-81 49M319 381c25 25 53 39 84 42"/>
+    <path class="g" stroke-width="6" d="M218 388c-29 24-60 35-94 31M301 392c37 23 75 26 113 9"/>
+
+    <path class="g" stroke-width="0" fill="#3b3a40" d="M224 263a13 13 0 1 0 0-26 13 13 0 0 0 0 26zM290 263a13 13 0 1 0 0-26 13 13 0 0 0 0 26z"/>
+    <path class="r" stroke-width="5" d="M207 228c18-10 34-11 48-3M275 225c18-9 34-8 49 4"/>
+    <path class="g" stroke-width="5" d="M229 301c18 11 37 12 59 0M236 322c15 5 29 5 43 0"/>
+    <path class="r" stroke-width="4" d="M253 146c13 17 26 17 39 0M219 148c10 14 20 14 31 0"/>
+
+    <path class="r" stroke-width="5" d="M144 86c36 11 67 27 94 47M376 86c-36 11-67 28-94 49"/>
+    <path class="b soft" stroke-width="3" d="M169 430c58 14 117 14 177-1"/>
+  </g>
+</svg>

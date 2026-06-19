@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Paper Fantasy logo base emblem">
+  <defs>
+    <filter id="pencil-wobble" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="11" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <style>
+      .g { stroke: #3b3a40; }
+      .r { stroke: #b5331f; }
+      .b { stroke: #2c3f8c; }
+      .paper { fill: #f2ecda; }
+      .soft { opacity: .38; }
+      .line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <g filter="url(#pencil-wobble)" class="line">
+    <path class="paper g" stroke-width="5" d="M166 58h196l36 38v285c0 26-20 48-47 51l-94 12-92-12c-27-3-47-25-47-52V105c0-26 22-47 48-47z"/>
+    <path class="g soft" stroke-width="3" d="M164 66h190l34 36v274c0 23-18 43-42 45l-90 11-88-11c-24-3-42-22-42-46V107c0-23 17-41 38-41z"/>
+    <path class="g" stroke-width="4" d="M354 59v45h45"/>
+    <path class="r" stroke-width="4" d="M149 111c63-7 162-8 226-1"/>
+    <path class="b soft" stroke-width="2.5" d="M142 154h224M142 195h224M142 236h224M142 277h224M142 318h224M142 359h210"/>
+    <path class="r" stroke-width="3.5" d="M187 86v312"/>
+
+    <path class="g" stroke-width="9" d="M130 372 356 146"/>
+    <path class="g soft" stroke-width="4" d="M120 382 346 156"/>
+    <path class="r" stroke-width="7" d="M330 131 377 84"/>
+    <path class="g" stroke-width="4" d="M360 74 389 103M349 86l28 29"/>
+
+    <g transform="translate(259 243)">
+      <path class="g" stroke-width="5" d="M-64-6c17-45 74-44 95-3 22 4 38 19 42 38-19-8-36-8-52 1-11 20-30 30-57 28-35-3-53-23-53-53 0-4 15-3 25-11z"/>
+      <path class="g" stroke-width="4" d="M-17-40c-7-15-20-29-38-42M18-39c7-16 20-31 40-44M-67-9c-25-5-47-2-67 11M47-3c24-6 47-4 68 5"/>
+      <path class="r" stroke-width="5" d="M-12-62c10 14 20 14 31 0"/>
+      <path class="g" stroke-width="0" fill="#3b3a40" d="M-26-10a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM16-10a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>
+      <path class="b" stroke-width="4" d="M-35 35c-15 18-31 29-49 34M13 36c17 19 33 29 49 34"/>
+    </g>
+
+    <g transform="translate(342 335) rotate(-8)">
+      <path class="paper b" stroke-width="4" d="M-42-36h73l29 28v72h-75l-27-27z"/>
+      <path class="b soft" stroke-width="3" d="M31-36v28h29M-18-9h1M10-9h1M39-9h1M-18 20h1M10 20h1M39 20h1"/>
+    </g>
+  </g>
+</svg>

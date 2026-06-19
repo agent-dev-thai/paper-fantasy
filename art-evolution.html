@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Paper Fantasy old rough art compared against the current manga-ink runtime art.">
+<meta name="theme-color" content="#241f1a">
+<title>Paper Fantasy Art Evolution</title>
+<link rel="icon" href="assets/paper-fantasy-title-manga.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@500;700&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --desk: #241f1a;
+    --desk-hi: #2f2820;
+    --paper: #f2ecda;
+    --paper-2: #ece4cd;
+    --rule: rgba(60, 96, 176, .30);
+    --margin: rgba(193, 57, 43, .55);
+    --graphite: #3b3a40;
+    --graphite-soft: rgba(59, 58, 64, .66);
+    --graphite-faint: rgba(59, 58, 64, .20);
+    --blue: #2c3f8c;
+    --red: #b5331f;
+    --chalk: #e9ece4;
+    --board: #2b3a31;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(242, 236, 218, .08), transparent 34rem),
+      linear-gradient(180deg, var(--desk-hi), var(--desk));
+    color: var(--paper);
+  }
+
+  body {
+    font-family: "Patrick Hand", "Comic Sans MS", cursive;
+    letter-spacing: 0;
+  }
+
+  a { color: inherit; }
+
+  .shell {
+    width: min(1180px, calc(100% - 28px));
+    margin: 0 auto;
+    padding: 24px 0 56px;
+  }
+
+  .board {
+    border: 5px solid #6b5535;
+    border-radius: 8px;
+    background: var(--board);
+    color: var(--chalk);
+    padding: 18px 20px 16px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, .32);
+  }
+
+  .board__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: start;
+  }
+
+  h1 {
+    margin: 0;
+    font: 700 clamp(42px, 8vw, 88px) / .86 "Caveat", cursive;
+  }
+
+  .kicker {
+    margin: 8px 0 0;
+    max-width: 64ch;
+    font: 18px / 1.2 "Special Elite", monospace;
+    color: rgba(233, 236, 228, .78);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+  }
+
+  .action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 8px 14px;
+    border: 1px solid rgba(233, 236, 228, .48);
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 20px;
+  }
+
+  .action:hover {
+    background: rgba(233, 236, 228, .10);
+  }
+
+  .notebook {
+    margin-top: 20px;
+    border-radius: 4px;
+    color: var(--graphite);
+    background:
+      linear-gradient(90deg, transparent 0 30px, var(--margin) 31px 32px, transparent 33px),
+      repeating-linear-gradient(0deg, var(--paper) 0 25px, var(--rule) 26px, var(--paper) 27px);
+    box-shadow: 0 22px 54px rgba(0, 0, 0, .42);
+    overflow: hidden;
+  }
+
+  .intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: end;
+    padding: 28px 30px 18px 58px;
+    border-bottom: 1px solid var(--graphite-faint);
+  }
+
+  .intro h2 {
+    margin: 0;
+    color: var(--red);
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: .9;
+  }
+
+  .intro p {
+    margin: 10px 0 0;
+    max-width: 68ch;
+    color: var(--graphite-soft);
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .stamp {
+    transform: rotate(-6deg);
+    border: 3px solid var(--red);
+    color: var(--red);
+    padding: 8px 12px 5px;
+    font: 28px / 1 "Special Elite", monospace;
+    text-transform: uppercase;
+  }
+
+  .compare {
+    padding: 26px 30px 34px 58px;
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: stretch;
+    margin-top: 24px;
+  }
+
+  .pair:first-child { margin-top: 0; }
+
+  .asset {
+    min-width: 0;
+    border: 2px solid rgba(59, 58, 64, .42);
+    background: rgba(242, 236, 218, .54);
+    padding: 14px;
+    position: relative;
+  }
+
+  .asset::before,
+  .asset::after {
+    content: "";
+    position: absolute;
+    inset-inline: 12px;
+    border-top: 1px solid rgba(59, 58, 64, .25);
+  }
+
+  .asset::before { top: 7px; }
+  .asset::after { bottom: 7px; }
+
+  .asset__label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    margin-bottom: 10px;
+    color: var(--graphite-soft);
+    font-size: 18px;
+  }
+
+  .asset__label strong {
+    color: var(--graphite);
+    font-size: 26px;
+    font-weight: 400;
+  }
+
+  .asset__label span {
+    font-family: "Special Elite", monospace;
+    font-size: 12px;
+  }
+
+  figure {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    min-height: 320px;
+    background:
+      linear-gradient(90deg, transparent 0 22px, rgba(193, 57, 43, .28) 23px 24px, transparent 25px),
+      repeating-linear-gradient(0deg, rgba(242, 236, 218, .72) 0 24px, rgba(60, 96, 176, .22) 25px, rgba(242, 236, 218, .72) 26px);
+    overflow: hidden;
+  }
+
+  figure img {
+    display: block;
+    max-width: min(100%, 560px);
+    max-height: 380px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 14px rgba(59, 58, 64, .18));
+  }
+
+  .note {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 12px;
+    padding: 8px 2px 0;
+    color: var(--graphite-soft);
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  .note strong {
+    color: var(--blue);
+    font-weight: 400;
+  }
+
+  .source-list {
+    margin: 20px 0 0;
+    padding: 18px 30px 28px 58px;
+    border-top: 1px solid var(--graphite-faint);
+    color: var(--graphite-soft);
+    font: 13px / 1.5 "Special Elite", monospace;
+  }
+
+  .source-list h2 {
+    margin: 0 0 8px;
+    color: var(--red);
+    font: 30px / 1 "Patrick Hand", cursive;
+  }
+
+  .source-list ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  @media (max-width: 860px) {
+    .shell {
+      width: min(100% - 18px, 680px);
+      padding-top: 10px;
+    }
+
+    .board__top,
+    .intro,
+    .pair,
+    .note {
+      grid-template-columns: 1fr;
+    }
+
+    .actions {
+      justify-content: flex-start;
+    }
+
+    .intro,
+    .compare,
+    .source-list {
+      padding-left: 42px;
+      padding-right: 14px;
+    }
+
+    figure {
+      min-height: 230px;
+    }
+
+    figure img {
+      max-height: 280px;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="board">
+    <div class="board__top">
+      <div>
+        <h1>Paper Fantasy<br>Art Evolution</h1>
+        <p class="kicker">A shareable comparison page for the content trail: rough notebook sketches on the left, active manga-ink runtime art on the right.</p>
+      </div>
+      <nav class="actions" aria-label="Project links">
+        <a class="action" href="index.html">Play prototype</a>
+        <a class="action" href="art-direction-tests.html">Art tests</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="notebook" aria-labelledby="comparison-title">
+    <div class="intro">
+      <div>
+        <h2 id="comparison-title">Old rough pass vs current runtime pass</h2>
+        <p>The original direction had the right classroom-sketch idea. The newer pass keeps the notebook fantasy but gives the title, monsters, and props clearer silhouettes for mobile and stronger manga-cover energy.</p>
+      </div>
+      <div class="stamp">before / after</div>
+    </div>
+
+    <div class="compare">
+      <section class="pair" aria-labelledby="title-art">
+        <article class="asset">
+          <div class="asset__label">
+            <strong id="title-art">Title art</strong>
+            <span>old rough</span>
+          </div>
+          <figure>
+            <img src="assets/paper-fantasy-title-sketch-rough.png" alt="Old rough title art for Paper Fantasy">
+          </figure>
+        </article>
+        <article class="asset">
+          <div class="asset__label">
+            <strong>Title art</strong>
+            <span>current manga</span>
+          </div>
+          <figure>
+            <img src="assets/paper-fantasy-title-manga.png" alt="Current manga-ink title art for Paper Fantasy">
+          </figure>
+        </article>
+        <p class="note"><strong>What changed</strong><span>The new emblem has stronger contour, more confident fantasy staging, and reads faster as the first-frame identity of the game.</span></p>
+      </section>
+
+      <section class="pair" aria-labelledby="monster-art">
+        <article class="asset">
+          <div class="asset__label">
+            <strong id="monster-art">Monster atlas</strong>
+            <span>old rough</span>
+          </div>
+          <figure>
+            <img src="assets/paper-fantasy-monsters-sketch-rough-atlas.png" alt="Old rough monster sprite atlas">
+          </figure>
+        </article>
+        <article class="asset">
+          <div class="asset__label">
+            <strong>Monster atlas</strong>
+            <span>current manga</span>
+          </div>
+          <figure>
+            <img src="assets/paper-fantasy-monsters-manga-atlas.png" alt="Current manga-ink monster sprite atlas">
+          </figure>
+        </article>
+        <p class="note"><strong>What changed</strong><span>The new monsters keep the doodle-on-paper fiction but have cleaner threat shapes, better boss presence, and more readable silhouettes at phone scale.</span></p>
+      </section>
+
+      <section class="pair" aria-labelledby="dungeon-art">
+        <article class="asset">
+          <div class="asset__label">
+            <strong id="dungeon-art">Dungeon atlas</strong>
+            <span>old rough</span>
+          </div>
+          <figure>
+            <img src="assets/paper-fantasy-dungeon-sketch-rough-atlas.png" alt="Old rough dungeon and prop sprite atlas">
+          </figure>
+        </article>
+        <article class="asset">
+          <div class="asset__label">
+            <strong>Dungeon atlas</strong>
+            <span>current manga</span>
+          </div>
+          <figure>
+            <img src="assets/paper-fantasy-dungeon-manga-atlas.png" alt="Current manga-ink dungeon and prop sprite atlas">
+          </figure>
+        </article>
+        <p class="note"><strong>What changed</strong><span>The new prop sheet makes rooms, exits, items, and combat objects easier to recognize while preserving the paper-margin texture.</span></p>
+      </section>
+    </div>
+
+    <aside class="source-list" aria-label="Asset source paths">
+      <h2>Where the files live</h2>
+      <ul>
+        <li>Old rough art: <code>assets/paper-fantasy-*-sketch-rough*.png</code></li>
+        <li>Current runtime art: <code>assets/paper-fantasy-*-manga*.png</code></li>
+        <li>Archived rollback/reference art: <code>assets/archive/</code></li>
+        <li>Raw image-generation sources: <code>assets/imagegen-sources/</code></li>
+      </ul>
+    </aside>
+  </section>
+</main>
+</body>
+</html>

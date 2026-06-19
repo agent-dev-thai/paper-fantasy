@@ -1,0 +1,25 @@
+.DS_Store
+Thumbs.db
+
+# Local dependency/build outputs if this static prototype is later wrapped in a toolchain.
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+.vite/
+
+# Local deploy/tool state.
+.railway/
+
+# Secrets stay out of git.
+.env
+.env.*
+!.env.example
+
+# Logs.
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
