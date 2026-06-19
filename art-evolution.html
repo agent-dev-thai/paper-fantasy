@@ -146,6 +146,74 @@
     text-transform: uppercase;
   }
 
+  .origin {
+    padding: 22px 30px 26px 58px;
+    border-bottom: 1px solid var(--graphite-faint);
+  }
+
+  .origin h2 {
+    margin: 0;
+    color: var(--blue);
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1;
+  }
+
+  .origin > p {
+    margin: 8px 0 16px;
+    max-width: 76ch;
+    color: var(--graphite-soft);
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .process {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .process-card {
+    position: relative;
+    min-width: 0;
+    border: 2px solid rgba(59, 58, 64, .38);
+    background: rgba(242, 236, 218, .58);
+    padding: 12px 12px 14px;
+    min-height: 178px;
+  }
+
+  .process-card::after {
+    content: "->";
+    position: absolute;
+    top: 18px;
+    right: -16px;
+    color: var(--red);
+    font: 18px / 1 "Special Elite", monospace;
+  }
+
+  .process-card:last-child::after { content: ""; }
+
+  .process-card span {
+    display: inline-block;
+    color: var(--red);
+    font: 12px / 1 "Special Elite", monospace;
+    margin-bottom: 8px;
+  }
+
+  .process-card h3 {
+    margin: 0;
+    color: var(--graphite);
+    font-size: 28px;
+    line-height: .95;
+    font-weight: 400;
+  }
+
+  .process-card p {
+    margin: 9px 0 0;
+    color: var(--graphite-soft);
+    font-size: 18px;
+    line-height: 1.15;
+  }
+
   .compare {
     padding: 26px 30px 34px 58px;
   }
@@ -262,6 +330,7 @@
 
     .board__top,
     .intro,
+    .process,
     .pair,
     .note {
       grid-template-columns: 1fr;
@@ -272,10 +341,18 @@
     }
 
     .intro,
+    .origin,
     .compare,
     .source-list {
       padding-left: 42px;
       padding-right: 14px;
+    }
+
+    .process-card::after {
+      top: auto;
+      right: 14px;
+      bottom: -13px;
+      transform: rotate(90deg);
     }
 
     figure {
@@ -311,6 +388,33 @@
       </div>
       <div class="stamp">before / after</div>
     </div>
+
+    <section class="origin" aria-labelledby="origin-title">
+      <h2 id="origin-title">Origin trail: Claude design -> Codex HTML -> imagegen assets</h2>
+      <p>This is the content story behind the prototype: concept first, playable canvas second, then a focused imagegen pass for production-readable art.</p>
+      <div class="process">
+        <article class="process-card">
+          <span>01 / concept</span>
+          <h3>Claude design direction</h3>
+          <p>The first pass established the secret-notebook fantasy: classroom danger, margin-map exploration, pencil combat, and the teacher threat.</p>
+        </article>
+        <article class="process-card">
+          <span>02 / prototype</span>
+          <h3>Codex HTML game</h3>
+          <p>Codex shaped the direction into a single-file HTML/canvas prototype with game loop, autosave, touch controls, battles, and procedural fallbacks.</p>
+        </article>
+        <article class="process-card">
+          <span>03 / art pass</span>
+          <h3>Codex + imagegen</h3>
+          <p>The rough doodle assets became manga-ink title, monster, and dungeon atlases while keeping the paper texture and classroom fiction intact.</p>
+        </article>
+        <article class="process-card">
+          <span>04 / repo</span>
+          <h3>Static HTML handoff</h3>
+          <p>The playable <code>index.html</code>, comparison pages, source assets, and preserved reference versions are packaged for Railway and GitHub content.</p>
+        </article>
+      </div>
+    </section>
 
     <div class="compare">
       <section class="pair" aria-labelledby="title-art">
@@ -385,6 +489,8 @@
       <ul>
         <li>Old rough art: <code>assets/paper-fantasy-*-sketch-rough*.png</code></li>
         <li>Current runtime art: <code>assets/paper-fantasy-*-manga*.png</code></li>
+        <li>Playable HTML: <code>index.html</code></li>
+        <li>Content HTML: <code>art-evolution.html</code> and <code>art-direction-tests.html</code></li>
         <li>Archived rollback/reference art: <code>assets/archive/</code></li>
         <li>Raw image-generation sources: <code>assets/imagegen-sources/</code></li>
       </ul>

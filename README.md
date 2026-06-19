@@ -4,8 +4,9 @@
 
 This folder is now ready to become a standalone static repo.
 
-- `index.html` is the deploy entrypoint for Railway/static hosts.
-- `art-evolution.html` is the content-facing old-vs-new art comparison page.
+- `index.html` is the deploy entrypoint for Railway/static hosts and now includes more in-game lore copy.
+- `art-evolution.html` is the content-facing old-vs-new art comparison page, including the Claude design -> Codex HTML -> imagegen asset origin trail.
+- `art-direction-tests.html` shows the earlier art direction exploration boards.
 - `Paper Fantasy.html` is preserved as the original reference prototype.
 - `versions/paper-fantasy-reference-2026-06-19.html` is an extra preserved snapshot for rollback/comparison.
 - No Node/Express wrapper is required. Railway can deploy static sites from GitHub with zero config when a root `index.html` is present.
@@ -28,6 +29,7 @@ Open `art-evolution.html` to compare the rough notebook pass against the current
 - Current runtime art lives in `assets/paper-fantasy-*-manga*.png`.
 - Older rollback/reference art lives in `assets/archive/`.
 - Raw image-generation source files live in `assets/imagegen-sources/`.
+- Process/storytelling trail lives in `art-evolution.html`.
 
 ### Local Preview
 

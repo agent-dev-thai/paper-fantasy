@@ -185,6 +185,35 @@
     ctx.fillText(str, 0, 0);
     ctx.restore();
   }
+  function wrapLines(str,maxW,font,maxLines){
+    ctx.save();
+    ctx.font = font;
+    const words = String(str||'').split(/\s+/).filter(Boolean);
+    const lines = [];
+    let line = '';
+    for(let i=0;i<words.length;i++){
+      const test = line ? line+' '+words[i] : words[i];
+      if(ctx.measureText(test).width <= maxW || !line){
+        line = test;
+      } else {
+        lines.push(line);
+        line = words[i];
+        if(lines.length === maxLines-1) break;
+      }
+    }
+    if(line && lines.length < maxLines) lines.push(line);
+    if(lines.length === maxLines && words.length){
+      let used = lines.join(' ').split(/\s+/).filter(Boolean).length;
+      if(used < words.length){
+        while(lines[lines.length-1].length > 3 && ctx.measureText(lines[lines.length-1]+'...').width > maxW){
+          lines[lines.length-1] = lines[lines.length-1].slice(0,-1);
+        }
+        lines[lines.length-1] += '...';
+      }
+    }
+    ctx.restore();
+    return lines;
+  }
 
   // ---------- audio (synth foley) ----------
   const Audio2 = {
@@ -232,11 +261,50 @@
   ];
   const BOSS = { key:'dragon', n:'THE FINAL EXAM', tier:9, hp:46, atk:9, gold:60, boss:true };
   const RUMORS = [
-    'they say the back page is cursed…',
+    'they say the back page is cursed...',
     'if the teacher sees ink, it is over.',
     'roll high. always roll high.',
     'someone drew a dragon on the last page.',
-    'hide the paper. trust no one.'
+    'hide the paper. trust no one.',
+    'the bell only rings for heroes who keep quiet.',
+    'every monster started as a failed homework doodle.',
+    'the final exam has wings, teeth, and a red pen.',
+    'detention is just another word for dungeon.',
+    'some doors only appear after you draw them twice.'
+  ];
+  const FLOOR_TITLES = [
+    '',
+    'homeroom catacombs',
+    'detention stacks',
+    'cafeteria abyss',
+    'the back page'
+  ];
+  const FLOOR_LORE = [
+    '',
+    'Period 1. Your notebook opens itself under the desk.',
+    'Detention shelves lean together like castle walls.',
+    'Cafeteria steam becomes fog over an ink-black moat.',
+    'The last page waits under a red grade: FINAL EXAM.'
+  ];
+  const WALK_LORE = [
+    'A pencil arrow twitches before you touch it.',
+    'The blue rule lines bend like dungeon corridors.',
+    'You hear chalk squeak somewhere above the ceiling.',
+    'A doodled door appears, then pretends it was always there.',
+    'Old eraser dust gathers into tiny footprints.',
+    'The margin line glows red like a warning torch.'
+  ];
+  const CHEST_LORE = [
+    'A folded permission slip hides treasure in its crease.',
+    'Someone taped courage under the lid.',
+    'The chest smells like graphite and cafeteria coins.',
+    'A note inside says: do not let the teacher read this.'
+  ];
+  const VICTORY_LORE = [
+    'The monster collapses into harmless pencil crumbs.',
+    'You erase its name before it can call for the teacher.',
+    'One more doodle joins the graveyard in the margin.',
+    'The page is quiet again, but only for a breath.'
   ];
 
   // ---------- state ----------
@@ -285,16 +353,30 @@
     S = {
       scene:'field', depth:1, p:freshPlayer(),
       grid:f.grid, hx:f.hx, hy:f.hy, px:f.hx, py:f.hy, explored:f.explored,
-      steps:0, msg:'You crack open the notebook. Floor 1.',
+      steps:0, msg:floorLore(1),
       battle:null,
       teacher:{ meter:0, rate:1/34, alert:false, alertT:0, said:pickChalk() },
-      hide:0, rumor:pick(RUMORS), over:null, tut:7
+      hide:0, rumor:pick(RUMORS), lore:'A secret campaign starts under the desk.', over:null, tut:7
     };
     setupField();
     save();
   }
 
   function pickChalk(){ return pick(['x² + 5x = ?','solve for n','∫ dx = …','15 × 12 = ?','define: empire','conjugate "être"']); }
+  function floorTitle(depth){ return FLOOR_TITLES[Math.min(depth, FLOOR_TITLES.length-1)] || ('floor '+depth); }
+  function floorLore(depth){ return FLOOR_LORE[Math.min(depth, FLOOR_LORE.length-1)] || ('Floor '+depth+'. The notebook invents a darker hall.'); }
+  function monsterLore(m){
+    const lines = {
+      slime:'A spilled ink blot learns your name.',
+      rat:'A margin rat drags a tiny ruler like a sword.',
+      ghost:'Eraser dust remembers every answer you rubbed out.',
+      skull:'A test skull rattles with wrong answers.',
+      spider:'An ink spider stitches corridors shut behind you.',
+      dragon:'The final exam crawls out of the last page.'
+    };
+    return lines[m.key] || (m.n+' crawls from the paper grain.');
+  }
+  function storyWhisper(){ return pick(WALK_LORE); }
 
   // ---------- persistence ----------
   function save(){
@@ -311,7 +393,7 @@
       S = { scene: d.scene==='over'||d.scene==='win'?'field':d.scene||'field', depth:d.depth, p:d.p,
         grid:d.grid, hx:d.hx, hy:d.hy, px:d.hx, py:d.hy, explored:d.explored||{}, steps:d.steps||0,
         msg:'You return to floor '+d.depth+'.', battle:null,
-        teacher:{ meter:0, rate:1/34, alert:false, alertT:0, said:pickChalk() }, hide:0, rumor:d.rumor||pick(RUMORS), over:null };
+        teacher:{ meter:0, rate:1/34, alert:false, alertT:0, said:pickChalk() }, hide:0, rumor:d.rumor||pick(RUMORS), lore:floorLore(d.depth), over:null };
       setupField(); return true;
     }catch(e){ return false; }
   }
@@ -401,6 +483,7 @@
     const m = boss ? Object.assign({}, BOSS) : scaleMon(pick(MONSTERS.filter(x=>x.tier<=Math.min(3,Math.ceil(S.depth/1.2)))));
     if(boss){ m.hp = m.hp + S.depth*2; m.maxHp=m.hp; }
     S.battle = { m, turn:'player', log:[m.n+' is inked into being!'], boss:!!boss, dieT:0, die:1, rolling:false, flash:0 };
+    S.lore = monsterLore(m);
     S.scene='battle';
     field('mhp', m.hp, 0,0, 24, COL.red, 'center','');  // positioned in render
     fx['mhp'].shown=m.hp; fx['mhp'].target=m.hp; fx['mhp'].phase='idle';
@@ -455,6 +538,7 @@
     S.p.kills++; let txt='Inked out! +'+g+'g';
     if(S.p.kills%3===0){ S.p.lvl++; S.p.maxHp+=6; S.p.maxMp+=2; S.p.atk+=1; S.p.hp=S.p.maxHp; S.p.mp=S.p.maxMp; setStat('php',S.p.hp); setStat('pmp',S.p.mp); Audio2.levelup(); txt+='  LV UP → '+S.p.lvl; }
     if(b.boss){ S.scene='win'; S.over='win'; toast=null; save(); return; }
+    S.lore = pick(VICTORY_LORE);
     toastMsg(txt); endBattle(false);
   }
 
@@ -475,15 +559,25 @@
     const t=S.grid[ny][nx];
     if(t===2){ descend(); return; }
     if(t===4){ S.grid[ny][nx]=1; startBattle(true); return; }
-    if(t===3){ S.grid[ny][nx]=1; const r=rf(); if(r<0.5){ const g=ri(4,10)+S.depth*3; S.p.gold+=g; setStat('gold',S.p.gold); toastMsg('chest: +'+g+'g'); } else if(r<0.85){ S.p.potions++; toastMsg('chest: +1 potion'); } else { S.p.atk++; toastMsg('chest: ATK +1'); } Audio2.tear(); save(); return; }
+    if(t===3){
+      S.grid[ny][nx]=1;
+      S.lore = pick(CHEST_LORE);
+      const r=rf();
+      if(r<0.5){ const g=ri(4,10)+S.depth*3; S.p.gold+=g; setStat('gold',S.p.gold); S.msg='You find classroom contraband treasure.'; toastMsg('chest: +'+g+'g'); }
+      else if(r<0.85){ S.p.potions++; S.msg='You pocket a red bottle labeled nurse pass.'; toastMsg('chest: +1 potion'); }
+      else { S.p.atk++; S.msg='You sharpen the pencil until it feels heroic.'; toastMsg('chest: ATK +1'); }
+      Audio2.tear(); save(); return;
+    }
     // random encounter
     if(S.steps>2 && rf()<0.20){ startBattle(false); return; }
+    if(S.steps%3===0) S.lore = storyWhisper();
     if(S.steps%4===0) save();
   }
   function descend(){
     S.depth++; if(S.depth>MAXD+1){ S.scene='win'; S.over='win'; return; }
     const f=genFloor(S.depth); S.grid=f.grid; S.hx=f.hx; S.hy=f.hy; S.px=f.hx; S.py=f.hy; S.explored=f.explored; S.steps=0;
-    S.msg=(S.depth>=MAXD)?'Floor '+S.depth+'. Something huge waits…':'You tear through to floor '+S.depth+'.';
+    S.msg=floorLore(S.depth);
+    S.lore=(S.depth>=MAXD)?'Only the back page is left. The teacher has already written the date.':'The page tears downward into '+floorTitle(S.depth)+'.';
     Audio2.tear(); toastMsg('FLOOR '+S.depth); save();
   }
 
@@ -630,7 +724,7 @@
   // ---- FIELD scene ----
   function drawField_(){
     // map title note
-    pencilText('— floor '+S.depth+' —', PAPER.x+PAPER.w/2, PAPER.y+30, 22, COL.graphite,'center',2);
+    pencilText('— '+floorTitle(S.depth)+' —', PAPER.x+PAPER.w/2, PAPER.y+30, 22, COL.graphite,'center',2);
     // ? help button (top-left of paper)
     pencilText('?', PAPER.x+22, PAPER.y+32, 26, COL.blue,'center',1);
     sketchCircle(PAPER.x+22, PAPER.y+25, 15, 4242, COL.blue, 1.4);
@@ -649,9 +743,17 @@
     drawStatBox();
     // d-pad
     drawDpad();
-    // rumor (whispered tutorial)
-    ctx.font='12px "Special Elite", monospace'; ctx.fillStyle='rgba(59,58,64,0.5)'; ctx.textAlign='center';
-    ctx.fillText('“'+S.rumor+'”', W/2, PAPER.y+PAPER.h-26); ctx.textAlign='left';
+    drawMarginNote(S.lore || S.rumor);
+  }
+
+  function drawMarginNote(txt){
+    const font='11px "Special Elite", monospace';
+    const lines=wrapLines('margin note: '+txt, PAPER.w-64, font, 2);
+    ctx.font=font;
+    ctx.fillStyle='rgba(59,58,64,0.55)';
+    ctx.textAlign='center';
+    for(let i=0;i<lines.length;i++) ctx.fillText(lines[i], W/2, PAPER.y+PAPER.h-31+i*15);
+    ctx.textAlign='left';
   }
 
   function drawMap(){
@@ -825,7 +927,7 @@
     ctx.fillStyle='rgba(20,16,12,0.55)'; roundRect(PAPER.x,PAPER.y,PAPER.w,PAPER.h,3); ctx.fill();
     const conf = S.over==='confiscated';
     pencilText(conf?'CONFISCATED':'YOU PASSED OUT', W/2, H*0.36, 34, COL.red,'center',2);
-    pencilText(conf?'the teacher took your notebook.':'you fell on floor '+S.depth+'.', W/2, H*0.36+40, 20, '#e9e4d6','center',5);
+    pencilText(conf?'your campaign became evidence.':'the page drinks the last pencil line.', W/2, H*0.36+40, 20, '#e9e4d6','center',5);
     if(conf){ // red stamp
       ctx.save(); ctx.translate(W/2,H*0.50); ctx.rotate(-0.18);
       sketchRect(-130,-34,260,68,12,COL.red,3); pencilText('SEE  ME', 0, 12, 40, COL.red,'center',3); ctx.restore();
@@ -835,7 +937,7 @@
   function drawWin(){
     ctx.fillStyle='rgba(20,16,12,0.5)'; roundRect(PAPER.x,PAPER.y,PAPER.w,PAPER.h,3); ctx.fill();
     pencilText('★ THE BELL RINGS ★', W/2, H*0.33, 32, COL.red,'center',2);
-    pencilText('you survived the lesson.', W/2, H*0.33+38, 22, '#e9e4d6','center',5);
+    pencilText('you survived the lesson and kept the legend.', W/2, H*0.33+38, 19, '#e9e4d6','center',5);
     pencilText('Lv '+S.p.lvl+'  ·  '+S.p.gold+' gold  ·  '+S.p.kills+' enemies', W/2, H*0.47, 20, '#cfc8b8','center',6);
     btnBig('retry', 'PLAY AGAIN', H*0.62, 'dark');
   }
@@ -860,7 +962,7 @@
     }
     pencilText('a dungeon scrawled in the margins', W/2, PAPER.y+420, 20, COL.graphiteL,'center',3);
     ctx.font='13px "Special Elite", monospace'; ctx.fillStyle='rgba(59,58,64,0.6)'; ctx.textAlign='center';
-    ctx.fillText('“'+pick(RUMORS)+'”', W/2, PAPER.y+442); ctx.textAlign='left';
+    ctx.fillText('“'+(S.rumor||RUMORS[0])+'”', W/2, PAPER.y+442); ctx.textAlign='left';
     let by=PAPER.y+474;
     btnBig('new', 'NEW GAME', by); by+=80;
     if(hasSave()){ btnBig('cont', 'CONTINUE', by); by+=80; }
@@ -968,7 +1070,7 @@
   function boot(){
     resize();
     loadAssets();
-    S = { scene:'title', teacher:{meter:0,alert:false}, p:freshPlayer(), depth:1 };
+    S = { scene:'title', teacher:{meter:0,alert:false}, p:freshPlayer(), depth:1, rumor:pick(RUMORS) };
     document.getElementById('boot').style.display='none';
     requestAnimationFrame(loop);
   }
