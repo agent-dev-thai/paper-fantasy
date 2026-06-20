@@ -5,7 +5,7 @@
 This folder is now ready to become a standalone static repo.
 
 - `index.html` is the deploy entrypoint for Railway/static hosts and now includes more in-game lore copy.
-- `art-evolution.html` is the content-facing old-vs-new art comparison page, including the Claude design -> Codex HTML -> imagegen asset origin trail.
+- `art-evolution.html` is the content-facing old-vs-new art comparison page, including the Claude design -> Codex HTML -> imagen asset origin trail.
 - `art-direction-tests.html` shows the earlier art direction exploration boards.
 - `Paper Fantasy.html` is preserved as the original reference prototype.
 - `versions/paper-fantasy-reference-2026-06-19.html` is an extra preserved snapshot for rollback/comparison.
@@ -265,7 +265,7 @@ Drawn by `drawMiniMonster(cx,cy,key,seed,col,scale)`. Each `key` is a recipe of 
 Stats scale with depth: `hp += depth*2`, `atk += floor(depth*0.6)`, `gold += depth*2`.
 
 ## Assets
-The original prototype used no image files: all visuals were procedurally drawn to canvas and all audio was synthesized. This repo now includes project-owned imagegen-derived manga-ink raster atlases for the title, monsters, and dungeon props, plus procedural fallbacks:
+The original prototype used no image files: all visuals were procedurally drawn to canvas and all audio was synthesized. This repo now includes project-owned imagen-derived manga-ink raster atlases for the title, monsters, and dungeon props, plus procedural fallbacks:
 
 - `assets/paper-fantasy-title-manga.png` — polished manga-ink title emblem used by the canvas
 - `assets/paper-fantasy-monsters-manga-atlas.png` — 3×2 polished manga-ink atlas for `slime`, `rat`, `ghost`, `skull`, `spider`, and `dragon`
@@ -273,8 +273,8 @@ The original prototype used no image files: all visuals were procedurally drawn 
 - `assets/paper-fantasy-title-sketch-rough.png` — earlier rough raster title emblem, retained as reference material
 - `assets/paper-fantasy-monsters-sketch-rough-atlas.png` — earlier rough monster sketch atlas, retained as reference material
 - `assets/paper-fantasy-dungeon-sketch-rough-atlas.png` — earlier rough dungeon sketch atlas, retained as reference material
-- `assets/paper-fantasy-logo-base.png` — refreshed 512px imagegen-derived manga-ink title emblem/base
-- `assets/final-exam-dragon.png` — refreshed 512px imagegen-derived manga-ink dragon cutout
+- `assets/paper-fantasy-logo-base.png` — refreshed 512px imagen-derived manga-ink title emblem/base
+- `assets/final-exam-dragon.png` — refreshed 512px imagen-derived manga-ink dragon cutout
 - `assets/imagegen-sources/` — raw built-in `image_gen` PNG outputs used for the active manga pass
 - `assets/archive/` — previous runtime PNGs retained for rollback/reference
 - `assets/paper-fantasy-logo-base.svg` — editable source for the title emblem
@@ -292,9 +292,9 @@ The canvas keeps procedural fallbacks, so the game still runs if an asset fails 
 
 ## Files
 - `Paper Fantasy.html` — the complete playable prototype (HTML + Canvas + vanilla JS, single file). All constants, the game loop, rendering primitives, asset loading, and systems described above live here. A `window.__pf` object exposes debug hooks (`step`, `btn`, `state`, `fx`) — remove in production.
-- `assets/paper-fantasy-title-manga.png` — imagegen-derived polished manga-ink title emblem used at runtime.
-- `assets/paper-fantasy-monsters-manga-atlas.png` — imagegen-derived polished manga-ink monster atlas used at runtime.
-- `assets/paper-fantasy-dungeon-manga-atlas.png` — imagegen-derived polished manga-ink dungeon/prop atlas used at runtime.
+- `assets/paper-fantasy-title-manga.png` — imagen-derived polished manga-ink title emblem used at runtime.
+- `assets/paper-fantasy-monsters-manga-atlas.png` — imagen-derived polished manga-ink monster atlas used at runtime.
+- `assets/paper-fantasy-dungeon-manga-atlas.png` — imagen-derived polished manga-ink dungeon/prop atlas used at runtime.
 - `assets/paper-fantasy-title-sketch-rough.png` — earlier rough raster title emblem/reference asset.
 - `assets/paper-fantasy-monsters-sketch-rough-atlas.png` — earlier rough monster sketch atlas/reference asset.
 - `assets/paper-fantasy-dungeon-sketch-rough-atlas.png` — earlier rough dungeon/prop sketch atlas/reference asset.

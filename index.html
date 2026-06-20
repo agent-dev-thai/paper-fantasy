@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="description" content="Paper Fantasy, a single-file canvas RPG prototype for mobile play.">
+<meta name="description" content="Paper Fantasy เกม RPG หน้าเดี่ยวเล่นบนมือถือ">
 <meta name="theme-color" content="#241f1a">
-<title>Paper Fantasy — a desk-margin RPG</title>
+<title>Paper Fantasy — RPG ซอกสมุด</title>
 <link rel="icon" href="assets/paper-fantasy-title-manga.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@500;700&family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Itim&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/paper-fantasy-title-manga.png">
 <link rel="preload" as="image" href="assets/paper-fantasy-monsters-manga-atlas.png">
 <link rel="preload" as="image" href="assets/paper-fantasy-dungeon-manga-atlas.png">
@@ -18,13 +18,93 @@
   body { display: flex; align-items: center; justify-content: center; touch-action: none; }
   #wrap { position: relative; }
   canvas { display: block; }
-  #boot { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #c8bfae; font-family: monospace; font-size: 13px; letter-spacing: 1px; }
+  #boot { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; color: #c8bfae; font-family: "Sarabun", monospace; font-size: 14px; }
+
+  /* ---- handoff nav: loose sketchbook tabs resting on the desk ---- */
+  #pages {
+    position: fixed;
+    left: max(16px, env(safe-area-inset-left, 0px));
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    pointer-events: none;          /* never steal canvas taps — only the tabs are live */
+    font-family: "Itim", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", cursive;
+  }
+  #pages .eyebrow {
+    margin: 0 0 1px 5px;
+    font: 12px/1.5 "Sarabun", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", monospace;
+    color: rgba(242, 236, 218, .58);
+    animation: pf-eyebrow-in .5s .12s backwards ease-out;
+  }
+  #pages a {
+    --tilt: -1.6deg;
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 16px 10px;
+    text-decoration: none;
+    color: #3b3a40;
+    background: #f2ecda;
+    border: 1.5px solid #3b3a40;
+    border-radius: 2px 10px 3px 9px / 9px 2px 10px 3px;   /* hand-cut paper edge */
+    box-shadow: 0 7px 16px rgba(0, 0, 0, .36), 0 1px 0 rgba(0, 0, 0, .5);
+    transform: rotate(var(--tilt));
+    transform-origin: left center;
+    transition: transform .34s cubic-bezier(.2, .8, .2, 1), box-shadow .34s cubic-bezier(.2, .8, .2, 1);
+    animation: pf-tab-in .55s backwards cubic-bezier(.2, .8, .2, 1);
+  }
+  #pages a:nth-of-type(1) { animation-delay: .2s; }
+  #pages a:nth-of-type(2) { --tilt: 1.5deg; animation-delay: .3s; }
+  #pages a .mark { font: 700 18px/1 "Itim", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", cursive; }
+  #pages a[data-mark="red"]  .mark { color: #b5331f; }
+  #pages a[data-mark="blue"] .mark { color: #2c3f8c; }
+  #pages a .label { font-size: 19px; line-height: 1.4; }
+  #pages a::after {                                        /* ink underline, drawn on hover */
+    content: "";
+    position: absolute;
+    left: 15px; right: 15px; bottom: 5px;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left center;
+    opacity: 0;
+    transition: transform .34s cubic-bezier(.2, .8, .2, 1), opacity .18s;
+  }
+  #pages a[data-mark="red"]::after  { background: #b5331f; }
+  #pages a[data-mark="blue"]::after { background: #2c3f8c; }
+  #pages a:hover, #pages a:focus-visible {
+    transform: rotate(0deg) translate(3px, -3px);
+    box-shadow: 0 13px 24px rgba(0, 0, 0, .44), 0 1px 0 rgba(0, 0, 0, .5);
+    outline: none;
+  }
+  #pages a:hover::after, #pages a:focus-visible::after { transform: scaleX(1); opacity: .92; }
+  #pages a:focus-visible { box-shadow: 0 0 0 3px rgba(44, 63, 140, .65), 0 13px 24px rgba(0, 0, 0, .44); }
+  #pages a:active { transform: rotate(0deg) translate(2px, -1px); }
+  @keyframes pf-tab-in {
+    from { opacity: 0; transform: translateY(11px) rotate(var(--tilt)); }
+  }
+  @keyframes pf-eyebrow-in {
+    from { opacity: 0; transform: translateY(6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #pages a, #pages .eyebrow { animation: none; }
+    #pages a, #pages a::after { transition: none; }
+  }
 </style>
 </head>
 <body>
 <div id="wrap"><canvas id="c" role="img" aria-label="Paper Fantasy canvas game"></canvas></div>
-<div id="boot">sharpening pencil…</div>
-<noscript>Paper Fantasy needs JavaScript enabled to run the canvas game.</noscript>
+<div id="boot">กำลังเหลาดินสอ...</div>
+<nav id="pages" aria-label="Design handoff pages">
+  <span class="eyebrow">หน้าอื่นในสมุด</span>
+  <a href="art-direction-tests.html" data-mark="red"><span class="mark" aria-hidden="true">✎</span><span class="label">ห้องศิลปะ</span></a>
+  <a href="art-evolution.html" data-mark="blue"><span class="mark" aria-hidden="true">↗</span><span class="label">ประวัติงานภาพ</span></a>
+</nav>
+<noscript>Paper Fantasy ต้องเปิด JavaScript นะเพื่อน</noscript>
 <script>
 "use strict";
 (function () {
@@ -32,6 +112,7 @@
   const W = 412, H = 892;
   const canvas = document.getElementById('c');
   const ctx = canvas.getContext('2d');
+  const pagesEl = document.getElementById('pages');   // handoff nav: shown on the title screen only
 
   // ---------- palette ----------
   const COL = {
@@ -176,7 +257,7 @@
   }
   function pencilText(str,x,y,size,col,align,seed){
     ctx.save();
-    ctx.font = size+'px "Patrick Hand", cursive';
+    ctx.font = size+'px "Itim", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", cursive';
     ctx.fillStyle = col || COL.graphite;
     ctx.textAlign = align || 'left';
     ctx.textBaseline = 'alphabetic';
@@ -253,58 +334,58 @@
   const MAXD = 4;
   const GRID = 9;
   const MONSTERS = [
-    { key:'slime', n:'Slime Blot',  tier:1, hp:8,  atk:3, gold:4 },
-    { key:'rat',   n:'Margin Rat',  tier:1, hp:6,  atk:4, gold:3 },
-    { key:'ghost', n:'Eraser Wraith',tier:2, hp:12, atk:5, gold:7 },
-    { key:'skull', n:'Test Skull',  tier:2, hp:15, atk:6, gold:9 },
-    { key:'spider',n:'Ink Spider',  tier:3, hp:18, atk:7, gold:12 }
+    { key:'slime', n:'สไลม์หยดหมึก',  tier:1, hp:8,  atk:3, gold:4 },
+    { key:'rat',   n:'หนูขอบสมุด',  tier:1, hp:6,  atk:4, gold:3 },
+    { key:'ghost', n:'ผีขี้ยางลบ',tier:2, hp:12, atk:5, gold:7 },
+    { key:'skull', n:'กะโหลกข้อสอบ',  tier:2, hp:15, atk:6, gold:9 },
+    { key:'spider',n:'แมงมุมน้ำหมึก',  tier:3, hp:18, atk:7, gold:12 }
   ];
-  const BOSS = { key:'dragon', n:'THE FINAL EXAM', tier:9, hp:46, atk:9, gold:60, boss:true };
+  const BOSS = { key:'dragon', n:'ข้อสอบไฟนอล', tier:9, hp:46, atk:9, gold:60, boss:true };
   const RUMORS = [
-    'they say the back page is cursed...',
-    'if the teacher sees ink, it is over.',
-    'roll high. always roll high.',
-    'someone drew a dragon on the last page.',
-    'hide the paper. trust no one.',
-    'the bell only rings for heroes who keep quiet.',
-    'every monster started as a failed homework doodle.',
-    'the final exam has wings, teeth, and a red pen.',
-    'detention is just another word for dungeon.',
-    'some doors only appear after you draw them twice.'
+    'เขาว่าหน้าสุดท้ายโดนสาป...',
+    'ถ้าจารย์เห็นรอยหมึกคือจบเห่',
+    'ทอยเต๋าให้สูงเข้าไว้ ยังไงก็รอด',
+    'มีคนวาดมังกรไว้หน้าสุดท้ายด้วยว่ะ',
+    'ซ่อนกระดาษด่วน อย่าไว้ใจใคร',
+    'กริ่งจะดังเฉพาะคนที่ทำตัวเงียบๆ',
+    'มอนทุกตัวมาจากรูปการบ้านส่งเดช',
+    'ไฟนอลมีทั้งปีก ทั้งเขี้ยว ปากกาแดง',
+    'ห้องกักบริเวณก็คือนรกดีๆ นี่เอง',
+    'บางประตูจะโผล่ถ้าแกวาดซ้ำสองรอบ'
   ];
   const FLOOR_TITLES = [
     '',
-    'homeroom catacombs',
-    'detention stacks',
-    'cafeteria abyss',
-    'the back page'
+    'สุสานโฮมรูม',
+    'หอกักบริเวณ',
+    'เหวโรงอาหาร',
+    'หน้าสุดท้าย'
   ];
   const FLOOR_LORE = [
     '',
-    'Period 1. Your notebook opens itself under the desk.',
-    'Detention shelves lean together like castle walls.',
-    'Cafeteria steam becomes fog over an ink-black moat.',
-    'The last page waits under a red grade: FINAL EXAM.'
+    'คาบ 1. สมุดจดเปิดตัวเองใต้โต๊ะเรียน',
+    'ตู้ห้องกักบริเวณเรียงกันเหมือนกำแพงปราสาท',
+    'ไอน้ำโรงอาหารกลายเป็นหมอกเหนือน้ำหมึกดำ',
+    'หน้าสุดท้ายรออยู่ใต้เกรดตัวแดง: สอบไฟนอล'
   ];
   const WALK_LORE = [
-    'A pencil arrow twitches before you touch it.',
-    'The blue rule lines bend like dungeon corridors.',
-    'You hear chalk squeak somewhere above the ceiling.',
-    'A doodled door appears, then pretends it was always there.',
-    'Old eraser dust gathers into tiny footprints.',
-    'The margin line glows red like a warning torch.'
+    'ลูกศรขยับดุ๊กดิ๊กก่อนแกจะแตะซะอีก',
+    'เส้นบรรทัดคดเคี้ยวเหมือนทางเดินคุก',
+    'ได้ยินเสียงชอล์กเขียนกระดานเอี๊ยดอ๊าดบนเพดาน',
+    'ประตูที่วาดเล่นโผล่มา ทำเนียนเหมือนอยู่มานาน',
+    'เศษขี้ยางลบเก่ากลายเป็นรอยเท้าจิ๋ว',
+    'เส้นกั้นหน้าแดงวาบเหมือนคบไฟเตือนภัย'
   ];
   const CHEST_LORE = [
-    'A folded permission slip hides treasure in its crease.',
-    'Someone taped courage under the lid.',
-    'The chest smells like graphite and cafeteria coins.',
-    'A note inside says: do not let the teacher read this.'
+    'ใบขออนุญาตพับครึ่ง ซ่อนสมบัติไว้ข้างใน',
+    'มีคนเอาความกล้าแปะเทปไว้ใต้ฝา',
+    'กล่องเหม็นกลิ่นไส้ดินสอกับเหรียญค่าขนม',
+    'โน้ตข้างในเขียนว่า: ห้ามให้จารย์เห็น'
   ];
   const VICTORY_LORE = [
-    'The monster collapses into harmless pencil crumbs.',
-    'You erase its name before it can call for the teacher.',
-    'One more doodle joins the graveyard in the margin.',
-    'The page is quiet again, but only for a breath.'
+    'มอนสเตอร์สลายกลายเป็นเศษผงดินสอ',
+    'รีบลบชื่อมันทิ้งก่อนมันจะฟ้องครู',
+    'ได้สุสานริมขอบเพิ่มมาอีกหนึ่งรูปแล้ว',
+    'หน้ากระดาษกลับมาเงียบสงบชั่วอึดใจเดียว'
   ];
 
   // ---------- state ----------
@@ -356,23 +437,23 @@
       steps:0, msg:floorLore(1),
       battle:null,
       teacher:{ meter:0, rate:1/34, alert:false, alertT:0, said:pickChalk() },
-      hide:0, rumor:pick(RUMORS), lore:'A secret campaign starts under the desk.', over:null, tut:7
+      hide:0, rumor:pick(RUMORS), lore:'การผจญภัยลับใต้โต๊ะเริ่มขึ้นแล้ว', over:null, tut:7
     };
     setupField();
     save();
   }
 
-  function pickChalk(){ return pick(['x² + 5x = ?','solve for n','∫ dx = …','15 × 12 = ?','define: empire','conjugate "être"']); }
-  function floorTitle(depth){ return FLOOR_TITLES[Math.min(depth, FLOOR_TITLES.length-1)] || ('floor '+depth); }
-  function floorLore(depth){ return FLOOR_LORE[Math.min(depth, FLOOR_LORE.length-1)] || ('Floor '+depth+'. The notebook invents a darker hall.'); }
+  function pickChalk(){ return pick(['9 × 9 = ?','จงหาค่า x','คำสมาสคืออะไร','12 × 12 = ?','ใครสถาปนาสุโขทัย','ท่องกิริยา 3 ช่อง']); }
+  function floorTitle(depth){ return FLOOR_TITLES[Math.min(depth, FLOOR_TITLES.length-1)] || ('ชั้น '+depth); }
+  function floorLore(depth){ return FLOOR_LORE[Math.min(depth, FLOOR_LORE.length-1)] || ('ชั้น '+depth+' สมุดเสกห้องมืดๆ ขึ้นมาอีกห้อง'); }
   function monsterLore(m){
     const lines = {
-      slime:'A spilled ink blot learns your name.',
-      rat:'A margin rat drags a tiny ruler like a sword.',
-      ghost:'Eraser dust remembers every answer you rubbed out.',
-      skull:'A test skull rattles with wrong answers.',
-      spider:'An ink spider stitches corridors shut behind you.',
-      dragon:'The final exam crawls out of the last page.'
+      slime:'หยดหมึกเลอะเทอะจำชื่อแกได้แล้ว',
+      rat:'หนูขอบสมุดคาบไม้บรรทัดจิ๋วเหมือนดาบ',
+      ghost:'ขี้ยางลบที่จำคำตอบที่แกเคยลบทิ้งไป',
+      skull:'กะโหลกข้อสอบสั่นพั่บๆ คาคำตอบที่ผิด',
+      spider:'แมงมุมน้ำหมึกถักใยปิดทางเดินข้างหลัง',
+      dragon:'ข้อสอบไฟนอลคลานออกมาจากหน้าสุดท้าย'
     };
     return lines[m.key] || (m.n+' crawls from the paper grain.');
   }
@@ -392,7 +473,7 @@
       const d=JSON.parse(localStorage.getItem('paperfantasy_v2')); if(!d||!d.grid) return false;
       S = { scene: d.scene==='over'||d.scene==='win'?'field':d.scene||'field', depth:d.depth, p:d.p,
         grid:d.grid, hx:d.hx, hy:d.hy, px:d.hx, py:d.hy, explored:d.explored||{}, steps:d.steps||0,
-        msg:'You return to floor '+d.depth+'.', battle:null,
+        msg:'กลับมาที่ชั้น '+d.depth, battle:null,
         teacher:{ meter:0, rate:1/34, alert:false, alertT:0, said:pickChalk() }, hide:0, rumor:d.rumor||pick(RUMORS), lore:floorLore(d.depth), over:null };
       setupField(); return true;
     }catch(e){ return false; }
@@ -425,7 +506,7 @@
     const size=f.size, col=f.col||COL.graphite, align=f.align||'left';
     const str = String(f.label? (f.label+f.shown) : f.shown);
     ctx.save();
-    ctx.font=size+'px "Patrick Hand", cursive'; ctx.textAlign=align; ctx.textBaseline='alphabetic';
+    ctx.font=size+'px "Itim", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", cursive'; ctx.textAlign=align; ctx.textBaseline='alphabetic';
     const w = ctx.measureText(str).width;
     let left = f.x; if(align==='center') left=f.x-w/2; else if(align==='right') left=f.x-w;
     // residual graphite smudge left behind
@@ -482,39 +563,39 @@
   function startBattle(boss){
     const m = boss ? Object.assign({}, BOSS) : scaleMon(pick(MONSTERS.filter(x=>x.tier<=Math.min(3,Math.ceil(S.depth/1.2)))));
     if(boss){ m.hp = m.hp + S.depth*2; m.maxHp=m.hp; }
-    S.battle = { m, turn:'player', log:[m.n+' is inked into being!'], boss:!!boss, dieT:0, die:1, rolling:false, flash:0 };
+    S.battle = { m, turn:'player', log:[m.n+' โผล่มาบนกระดาษ!'], boss:!!boss, dieT:0, die:1, rolling:false, flash:0 };
     S.lore = monsterLore(m);
     S.scene='battle';
     field('mhp', m.hp, 0,0, 24, COL.red, 'center','');  // positioned in render
     fx['mhp'].shown=m.hp; fx['mhp'].target=m.hp; fx['mhp'].phase='idle';
     Audio2.stinger();
-    toastMsg('! ENCOUNTER');
+    toastMsg('! ปะทะ');
   }
   function scaleMon(base){ const m=Object.assign({},base); m.hp=m.hp+Math.floor(S.depth*2); m.maxHp=m.hp; m.atk=m.atk+Math.floor(S.depth*0.6); m.gold=m.gold+S.depth*2; return m; }
 
   function playerAct(kind){
     const b=S.battle; if(!b||b.turn!=='player'||anyAnimating()||b.rolling) return;
     if(kind==='attack' || kind==='spell'){
-      if(kind==='spell' && S.p.mp<3){ b.log=['Not enough MP.']; return; }
+      if(kind==='spell' && S.p.mp<3){ b.log=['MP ไม่พอ']; return; }
       b.rolling=true; b.dieT=0; b.turn='rolling';
       b._pending=kind;
     } else if(kind==='item'){
-      if(S.p.potions<1){ b.log=['No potions.']; return; }
+      if(S.p.potions<1){ b.log=['ยาหมดแล้ว!']; return; }
       S.p.potions--; const h=14; S.p.hp=Math.min(S.p.maxHp,S.p.hp+h);
       setStat('php',S.p.hp); Audio2.scratch();
-      b.log=['Sipped a potion. +'+h+' HP.']; save();
+      b.log=['กระดกยา +'+h+' HP']; save();
       b.turn='enemyWait'; b._wait=TIMING.battleMsg;
     } else if(kind==='flee'){
-      if(b.boss){ b.log=["Can't flee the EXAM!"]; return; }
-      if(rf()<0.55){ b.log=['You slip away.']; endBattle(false); }
-      else { b.log=["Couldn't escape!"]; b.turn='enemyWait'; b._wait=TIMING.battleMsg; }
+      if(b.boss){ b.log=["สอบไฟนอลหนีไม่ได้นะเว้ย!"]; return; }
+      if(rf()<0.55){ b.log=['ย่องหนีสำเร็จ']; endBattle(false); }
+      else { b.log=["หนีไม่พ้น!"]; b.turn='enemyWait'; b._wait=TIMING.battleMsg; }
     }
   }
   function resolveRoll(){
     const b=S.battle; const kind=b._pending; const r=b.die;
     let dmg, txt;
-    if(kind==='spell'){ S.p.mp=Math.max(0,S.p.mp-3); setStat('pmp',S.p.mp); const r2=ri(1,6); dmg=r+r2+S.p.atk+2; txt='BOLT! rolled '+r+'+'+r2+' → '+dmg; }
-    else { dmg=r+S.p.atk; txt='Strike! rolled '+r+' → '+dmg; }
+    if(kind==='spell'){ S.p.mp=Math.max(0,S.p.mp-3); setStat('pmp',S.p.mp); const r2=ri(1,6); dmg=r+r2+S.p.atk+2; txt='ยิงเวท! ทอยได้ '+r+'+'+r2+' → '+dmg; }
+    else { dmg=r+S.p.atk; txt='โจมตี! ทอยได้ '+r+' → '+dmg; }
     b.m.hp=Math.max(0,b.m.hp-dmg); setStat('mhp',b.m.hp);
     Audio2.hit(); shake=6; b.log=[txt];
     b.rolling=false;
@@ -524,7 +605,7 @@
   function enemyTurn(){
     const b=S.battle; const dmg=ri(1,b.m.atk)+Math.floor(S.depth/2);
     S.p.hp=Math.max(0,S.p.hp-dmg); setStat('php',S.p.hp);
-    Audio2.hit(); shake=7; b.log=[b.m.n+' hits you for '+dmg+'.'];
+    Audio2.hit(); shake=7; b.log=[b.m.n+' ตบแกเจ็บ '+dmg];
     if(S.p.hp<=0){ b.turn='deadWait'; b._wait=TIMING.battleMsgAfterKo; }
     else { b.turn='player'; }
   }
@@ -535,7 +616,7 @@
   }
   function victory(){
     const b=S.battle; const g=b.m.gold; S.p.gold+=g; setStat('gold',S.p.gold);
-    S.p.kills++; let txt='Inked out! +'+g+'g';
+    S.p.kills++; let txt='ลบเรียบร้อย! +'+g+'g';
     if(S.p.kills%3===0){ S.p.lvl++; S.p.maxHp+=6; S.p.maxMp+=2; S.p.atk+=1; S.p.hp=S.p.maxHp; S.p.mp=S.p.maxMp; setStat('php',S.p.hp); setStat('pmp',S.p.mp); Audio2.levelup(); txt+='  LV UP → '+S.p.lvl; }
     if(b.boss){ S.scene='win'; S.over='win'; toast=null; save(); return; }
     S.lore = pick(VICTORY_LORE);
@@ -563,9 +644,9 @@
       S.grid[ny][nx]=1;
       S.lore = pick(CHEST_LORE);
       const r=rf();
-      if(r<0.5){ const g=ri(4,10)+S.depth*3; S.p.gold+=g; setStat('gold',S.p.gold); S.msg='You find classroom contraband treasure.'; toastMsg('chest: +'+g+'g'); }
-      else if(r<0.85){ S.p.potions++; S.msg='You pocket a red bottle labeled nurse pass.'; toastMsg('chest: +1 potion'); }
-      else { S.p.atk++; S.msg='You sharpen the pencil until it feels heroic.'; toastMsg('chest: ATK +1'); }
+      if(r<0.5){ const g=ri(4,10)+S.depth*3; S.p.gold+=g; setStat('gold',S.p.gold); S.msg='เจอของเล่นต้องห้ามใต้โต๊ะเรียน'; toastMsg('กล่อง: +'+g+'g'); }
+      else if(r<0.85){ S.p.potions++; S.msg='จิ๊กยาแดงเขียนว่า \'ใบอนุญาตไปห้องพยาบาล\''; toastMsg('กล่อง: +1 โพชั่น'); }
+      else { S.p.atk++; S.msg='เหลาดินสอแหลมเปี๊ยบ รู้สึกทรงพลังขึ้น'; toastMsg('กล่อง: ATK +1'); }
       Audio2.tear(); save(); return;
     }
     // random encounter
@@ -577,7 +658,7 @@
     S.depth++; if(S.depth>MAXD+1){ S.scene='win'; S.over='win'; return; }
     const f=genFloor(S.depth); S.grid=f.grid; S.hx=f.hx; S.hy=f.hy; S.px=f.hx; S.py=f.hy; S.explored=f.explored; S.steps=0;
     S.msg=floorLore(S.depth);
-    S.lore=(S.depth>=MAXD)?'Only the back page is left. The teacher has already written the date.':'The page tears downward into '+floorTitle(S.depth)+'.';
+    S.lore=(S.depth>=MAXD)?'เหลือแค่หน้าสุดท้ายแล้ว จารย์เขียนวันที่รอแล้วด้วย':'กระดาษขาดทะลุลงไปชั้น '+floorTitle(S.depth);
     Audio2.tear(); toastMsg('FLOOR '+S.depth); save();
   }
 
@@ -638,6 +719,7 @@
 
   // =================== RENDER ===================
   function render(){
+    if(pagesEl) pagesEl.style.display = (S && S.scene==='title') ? '' : 'none';
     buttons = [];
     ctx.clearRect(0,0,W,H);
     // desk
@@ -691,7 +773,7 @@
     ctx.strokeStyle='#6b5535'; ctx.lineWidth=5; ctx.stroke();
     // chalk writing (the timer mechanic flavor)
     ctx.save();
-    ctx.font='26px "Caveat", cursive'; ctx.fillStyle=COL.chalk; ctx.globalAlpha=0.9; ctx.textBaseline='middle';
+    ctx.font='26px "Itim", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", cursive'; ctx.fillStyle=COL.chalk; ctx.globalAlpha=0.9; ctx.textBaseline='middle';
     ctx.fillText(S.teacher.said, 22, 30);
     ctx.restore();
     // threat meter
@@ -699,8 +781,8 @@
     ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fillRect(mx,my,mw,mh);
     const m=S.teacher.meter;
     ctx.fillStyle = m>0.7?'#e0563b':(m>0.4?'#e0b13b':'#7fae6a'); ctx.fillRect(mx,my,mw*m,mh);
-    ctx.font='10px "Special Elite", monospace'; ctx.fillStyle='rgba(233,236,228,0.7)'; ctx.textAlign='right';
-    ctx.fillText('TEACHER', mx+mw, my-4); ctx.textAlign='left';
+    ctx.font='10px "Sarabun", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", monospace'; ctx.fillStyle='rgba(233,236,228,0.7)'; ctx.textAlign='right';
+    ctx.fillText('จารย์', mx+mw, my-4); ctx.textAlign='left';
   }
 
   function drawPaper(){
@@ -733,8 +815,8 @@
     // first-run hint banner
     if(S.tut>0){
       ctx.globalAlpha=clamp(S.tut,0,1);
-      pencilText('tap ↑↓←→ to walk · reach the ▼ exit', W/2, MAP.y+GRID*MAP.cell+16, 17, COL.red,'center',5);
-      pencilText('watch the TEACHER bar up top!', W/2, MAP.y+GRID*MAP.cell+38, 16, COL.graphite,'center',6);
+      pencilText('กด ↑↓←→ เพื่อเดิน · ไปให้ถึงทางออก ▼', W/2, MAP.y+GRID*MAP.cell+16, 17, COL.red,'center',5);
+      pencilText('คอยดูเกจ \'จารย์มอง\' ด้านบน!', W/2, MAP.y+GRID*MAP.cell+38, 16, COL.graphite,'center',6);
       ctx.globalAlpha=1;
     } else {
       pencilText(S.msg||'', PAPER.x+40, MAP.y+GRID*MAP.cell+34, 18, COL.graphiteL,'left',7);
@@ -747,7 +829,7 @@
   }
 
   function drawMarginNote(txt){
-    const font='11px "Special Elite", monospace';
+    const font='11px "Sarabun", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", monospace';
     const lines=wrapLines('margin note: '+txt, PAPER.w-64, font, 2);
     ctx.font=font;
     ctx.fillStyle='rgba(59,58,64,0.55)';
@@ -769,7 +851,7 @@
       }
       // contents
       if(t===2){
-        if(!drawSprite('dungeonAtlas','exit',mx,my,c*0.9,c*0.9,0.98)){ pencilText('▼',mx,my+7,20,COL.blue,'center',seed); pencilText('exit',mx,my+18,11,COL.graphiteL,'center',seed); }
+        if(!drawSprite('dungeonAtlas','exit',mx,my,c*0.9,c*0.9,0.98)){ pencilText('▼',mx,my+7,20,COL.blue,'center',seed); pencilText('ออก',mx,my+18,11,COL.graphiteL,'center',seed); }
       }
       else if(t===4){
         if(!drawSprite('monstersAtlas','dragon',mx,my,c*1.1,c*1.1,0.98)){ drawMiniMonster(mx,my,'dragon',seed,COL.red); }
@@ -800,7 +882,7 @@
     const x=PAPER.x+26, y=PAPER.y+PAPER.h-150, w=PAPER.w-52, h=104;
     sketchRect(x,y,w,h,777,COL.graphite,1.8);
     pencilText('LV '+S.p.lvl, x+12, y+24, 22, COL.red,'left',3);
-    pencilText('floor '+S.depth, x+w-12, y+24, 18, COL.graphiteL,'right',4);
+    pencilText('ชั้น '+S.depth, x+w-12, y+24, 18, COL.graphiteL,'right',4);
     // HP
     pencilText('HP', x+12, y+44, 20, COL.graphite,'left',5);
     drawHandBar(x+58+44, y+30, w-58-44-70, 14, S.p.hp/S.p.maxHp, 31, COL.graphite);
@@ -814,7 +896,7 @@
     // gold + potions
     pencilText('₿', x+12, y+100, 16, COL.graphite,'left',9);
     drawField('gold');
-    pencilText('pots:'+S.p.potions, x+w-12, y+100, 16, COL.graphiteL,'right',10);
+    pencilText('ยา:'+S.p.potions, x+w-12, y+100, 16, COL.graphiteL,'right',10);
   }
   function drawHandBar(x,y,w,h,frac,seed,col){
     sketchRect(x,y,w,h,seed,col,1.4);
@@ -825,13 +907,13 @@
     const cx=W/2, cy=PAPER.y+PAPER.h-150-66, s=44, gap=4;
     const mk=(id,dx,dy,label)=>{ const bx=cx+dx*(s+gap)-s/2, by=cy+dy*(s+gap)-s/2; sketchRect(bx,by,s,s,id.charCodeAt(2)*3+dx*7+dy*11,COL.graphite,1.6); pencilText(label,bx+s/2,by+s/2+9,26,COL.graphite,'center',dx+dy*3); buttons.push({id,x:bx,y:by,w:s,h:s}); };
     mk('mvU',0,-1,'↑'); mk('mvL',-1,0,'←'); mk('mvR',1,0,'→'); mk('mvD',0,1,'↓');
-    pencilText('move', cx, cy+9, 14, COL.graphiteL,'center',2);
+    pencilText('เดิน', cx, cy+9, 14, COL.graphiteL,'center',2);
   }
 
   // ---- BATTLE scene ----
   function drawBattle(){
     const b=S.battle;
-    pencilText('!! '+(b.boss?'BOSS':'a wild ink beast appears'), PAPER.x+PAPER.w/2, PAPER.y+30, 22, COL.red,'center',2);
+    pencilText('!! '+(b.boss?'บอส':'อสูรหมึกโผล่มา'), PAPER.x+PAPER.w/2, PAPER.y+30, 22, COL.red,'center',2);
     // monster sketch area
     const mx=PAPER.x+PAPER.w/2, my=PAPER.y+150;
     if(!drawSprite('monstersAtlas', b.m.key, mx, my+6, 232, 232, 1)){
@@ -871,16 +953,16 @@
     pencilText('MP', x+12, y+50, 16, COL.blue,'left',6);
     drawHandBar(x+44, y+40, w*0.45, 9, S.p.mp/S.p.maxMp, 41, COL.blue);
     field('pmp', S.p.mp, x+44+w*0.45+10, y+50, 16, COL.blue,'left',''); drawField('pmp');
-    pencilText('pots:'+S.p.potions, x+w-12, y+26, 16, COL.graphiteL,'right',7);
+    pencilText('ยา:'+S.p.potions, x+w-12, y+26, 16, COL.graphiteL,'right',7);
   }
   function drawCommands(){
     const y=PAPER.y+PAPER.h-138, bw=(PAPER.w-52-12)/2, bh=52, x=PAPER.x+26;
     const cmd=(id,cx,cy,label,sub,col)=>{ sketchRect(cx,cy,bw,bh,id.charCodeAt(1)*5,COL.graphite,1.6); pencilText(label,cx+16,cy+24,22,col||COL.graphite,'left',2); if(sub) pencilText(sub,cx+bw-12,cy+40,14,COL.graphiteL,'right',3); buttons.push({id,x:cx,y:cy,w:bw,h:bh}); };
-    cmd('atk', x, y, 'Attack','d6+ATK');
-    cmd('spl', x+bw+12, y, 'Bolt', '3MP', COL.blue);
-    cmd('itm', x, y+bh+10, 'Potion','x'+S.p.potions);
+    cmd('atk', x, y, 'โจมตี','d6+ATK');
+    cmd('spl', x+bw+12, y, 'ยิงเวท', '3MP', COL.blue);
+    cmd('itm', x, y+bh+10, 'กินยา','x'+S.p.potions);
     drawSprite('dungeonAtlas','potion', x+bw-23, y+bh+36, 30, 30, 0.8);
-    cmd('fle', x+bw+12, y+bh+10, 'Flee', S.battle.boss?'—':'~50%', COL.red);
+    cmd('fle', x+bw+12, y+bh+10, 'เผ่น', S.battle.boss?'—':'~50%', COL.red);
   }
 
   // ---- procedural monster sketches ----
@@ -902,13 +984,13 @@
   function drawAlert(){
     ctx.fillStyle='rgba(181,51,31,0.16)'; ctx.fillRect(0,0,W,H);
     const flash=Math.sin(performance.now()*0.02)>0;
-    pencilText('TEACHER IS LOOKING', W/2, H*0.36, 34, flash?COL.red:COL.graphite,'center',2);
-    pencilText('HIDE THE PAPER!', W/2, H*0.36+38, 26, COL.graphite,'center',5);
+    pencilText('จารย์หันมาแล้ว!', W/2, H*0.36, 34, flash?COL.red:COL.graphite,'center',2);
+    pencilText('ซ่อนกระดาษด่วน!', W/2, H*0.36+38, 26, COL.graphite,'center',5);
     // panic button
     const bw=220,bh=72,bx=W/2-bw/2,by=H*0.5;
     ctx.fillStyle=COL.red; roundRect(bx,by,bw,bh,8); ctx.fill();
     sketchRect(bx,by,bw,bh,99,'#fff',2);
-    pencilText('PANIC — HIDE', W/2, by+46, 28, '#fff','center',1);
+    pencilText('ซ่อนด่วน!', W/2, by+46, 28, '#fff','center',1);
     buttons.push({id:'panic',x:bx,y:by,w:bw,h:bh});
     // timer bar
     const t=clamp(S.teacher.alertT/3.6,0,1);
@@ -917,29 +999,29 @@
   }
   function drawCoverSheet(){
     drawPaper();
-    pencilText('Mathematics — Worksheet 7', PAPER.x+44, PAPER.y+50, 22, COL.graphite,'left',1);
+    pencilText('คณิตศาสตร์ - แบบฝึกหัดที่ 7', PAPER.x+44, PAPER.y+50, 22, COL.graphite,'left',1);
     ctx.strokeStyle=COL.margin; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(PAPER.x+30,PAPER.y+6); ctx.lineTo(PAPER.x+30,PAPER.y+PAPER.h-6); ctx.stroke();
-    const probs=['1.  12 + 47 = ______','2.  solve: 3x − 9 = 12','3.  area of circle, r=4','4.  list 3 prime numbers','5.  ½ + ¾ = ______','6.  define: photosynthesis'];
+    const probs=['1.  25 + 38 = ______','2.  แก้สมการ: 3x - 9 = 12','3.  หาพื้นที่วงกลม (r=7)','4.  เขียนจำนวนเฉพาะมา 3 ตัว','5.  1/2 + 3/4 = ______','6.  จงอธิบายการสังเคราะห์แสง'];
     for(let i=0;i<probs.length;i++) pencilText(probs[i], PAPER.x+44, PAPER.y+100+i*52, 20, COL.graphiteL,'left',i+2);
-    pencilText('…just doing my homework, sir…', W/2, PAPER.y+PAPER.h-30, 16, 'rgba(59,58,64,0.5)','center',9);
+    pencilText('…แค่นั่งทำการบ้านครับจารย์…', W/2, PAPER.y+PAPER.h-30, 16, 'rgba(59,58,64,0.5)','center',9);
   }
   function drawGameOver(){
     ctx.fillStyle='rgba(20,16,12,0.55)'; roundRect(PAPER.x,PAPER.y,PAPER.w,PAPER.h,3); ctx.fill();
     const conf = S.over==='confiscated';
-    pencilText(conf?'CONFISCATED':'YOU PASSED OUT', W/2, H*0.36, 34, COL.red,'center',2);
-    pencilText(conf?'your campaign became evidence.':'the page drinks the last pencil line.', W/2, H*0.36+40, 20, '#e9e4d6','center',5);
+    pencilText(conf?'โดนยึดสมุด!':'สลบคากระดาษ', W/2, H*0.36, 34, COL.red,'center',2);
+    pencilText(conf?'กระดาษที่วาดเล่นกลายเป็นหลักฐานชั้นดี':'รอยดินสอเส้นสุดท้ายค่อยๆ จางไปในกระดาษ', W/2, H*0.36+40, 20, '#e9e4d6','center',5);
     if(conf){ // red stamp
       ctx.save(); ctx.translate(W/2,H*0.50); ctx.rotate(-0.18);
-      sketchRect(-130,-34,260,68,12,COL.red,3); pencilText('SEE  ME', 0, 12, 40, COL.red,'center',3); ctx.restore();
-    } else { pencilText('Lv '+S.p.lvl+' · '+S.p.gold+'g · '+S.p.kills+' enemies', W/2, H*0.50, 18, '#cfc8b8','center',6); }
-    btnBig('retry', 'TRY AGAIN', H*0.66, 'dark');
+      sketchRect(-130,-34,260,68,12,COL.red,3); pencilText('พบจารย์ด่วน', 0, 12, 40, COL.red,'center',3); ctx.restore();
+    } else { pencilText('Lv '+S.p.lvl+' · '+S.p.gold+'g · ปราบไป '+S.p.kills+' ตัว', W/2, H*0.50, 18, '#cfc8b8','center',6); }
+    btnBig('retry', 'ลองใหม่', H*0.66, 'dark');
   }
   function drawWin(){
     ctx.fillStyle='rgba(20,16,12,0.5)'; roundRect(PAPER.x,PAPER.y,PAPER.w,PAPER.h,3); ctx.fill();
-    pencilText('★ THE BELL RINGS ★', W/2, H*0.33, 32, COL.red,'center',2);
-    pencilText('you survived the lesson and kept the legend.', W/2, H*0.33+38, 19, '#e9e4d6','center',5);
-    pencilText('Lv '+S.p.lvl+'  ·  '+S.p.gold+' gold  ·  '+S.p.kills+' enemies', W/2, H*0.47, 20, '#cfc8b8','center',6);
-    btnBig('retry', 'PLAY AGAIN', H*0.62, 'dark');
+    pencilText('★ กริ่งเลิกเรียนดังแล้ว! ★', W/2, H*0.33, 32, COL.red,'center',2);
+    pencilText('รอดตายจากคาบเรียน แถมความเท่ยังอยู่ครบ', W/2, H*0.33+38, 19, '#e9e4d6','center',5);
+    pencilText('Lv '+S.p.lvl+'  ·  '+S.p.gold+' ทอง  ·  ปราบไป '+S.p.kills+' ตัว', W/2, H*0.47, 20, '#cfc8b8','center',6);
+    btnBig('retry', 'เล่นอีกรอบ', H*0.62, 'dark');
   }
   function btnBig(id,label,y,tone){
     const bw=240,bh=66,bx=W/2-bw/2;
@@ -960,31 +1042,31 @@
       pencilText('FANTASY', W/2, PAPER.y+210, 64, COL.red,'center',2);
       drawMiniMonster(W/2, PAPER.y+300, 'dragon', 12, COL.graphite, 2.2);
     }
-    pencilText('a dungeon scrawled in the margins', W/2, PAPER.y+420, 20, COL.graphiteL,'center',3);
-    ctx.font='13px "Special Elite", monospace'; ctx.fillStyle='rgba(59,58,64,0.6)'; ctx.textAlign='center';
+    pencilText('คุกใต้ดินริมขอบกระดาษสมุดจด', W/2, PAPER.y+420, 20, COL.graphiteL,'center',3);
+    ctx.font='13px "Sarabun", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", monospace'; ctx.fillStyle='rgba(59,58,64,0.6)'; ctx.textAlign='center';
     ctx.fillText('“'+(S.rumor||RUMORS[0])+'”', W/2, PAPER.y+442); ctx.textAlign='left';
     let by=PAPER.y+474;
-    btnBig('new', 'NEW GAME', by); by+=80;
-    if(hasSave()){ btnBig('cont', 'CONTINUE', by); by+=80; }
-    btnBig('help', 'HOW TO PLAY', by);
-    pencilText('✎ plays fully offline · saves itself', W/2, PAPER.y+PAPER.h-26, 16, COL.graphiteL,'center',7);
+    btnBig('new', 'เริ่มเกมใหม่', by); by+=80;
+    if(hasSave()){ btnBig('cont', 'เล่นต่อ', by); by+=80; }
+    btnBig('help', 'วิธีเล่น', by);
+    pencilText('✎ เล่นออฟไลน์ได้ 100% · เซฟอัตโนมัติ', W/2, PAPER.y+PAPER.h-26, 16, COL.graphiteL,'center',7);
   }
 
   function drawHelp(){
-    pencilText('HOW TO PLAY', W/2, PAPER.y+54, 38, COL.red,'center',1);
-    pencilText('(whispered, so the teacher won\u2019t hear)', W/2, PAPER.y+80, 16, COL.graphiteL,'center',2);
+    pencilText('วิธีเล่น', W/2, PAPER.y+54, 38, COL.red,'center',1);
+    pencilText('(กระซิบเบาๆ อย่าให้จารย์ได้ยินนะ)', W/2, PAPER.y+80, 16, COL.graphiteL,'center',2);
     const lines = [
-      ['↑ ↓ ← →','tap the pad to walk. the room only gets'],
-      ['','drawn once your stick-figure steps in.'],
-      ['▼','find the EXIT to drop down a floor.'],
-      ['▣','chests give gold, potions or power.'],
-      ['⚔','bump a monster \u2192 a battle starts.'],
-      ['','Attack rolls the die · Bolt spends MP ·'],
-      ['','Potion heals · Flee (sometimes) escapes.'],
-      ['‼','watch the TEACHER bar up top. when it'],
-      ['','fills \u2192 smack PANIC (or swipe down) to'],
-      ['','hide, or your book gets CONFISCATED.'],
-      ['✓','it saves itself. close & come back anytime.']
+      ['↑ ↓ ← →','กดปุ่มทิศทางเพื่อเดิน ห้องจะค่อยๆ วาดขึ้น'],
+      ['','เมื่อตัวก้างของแกเดินไปถึง'],
+      ['▼','หาทางออก ▼ เพื่อลงไปชั้นถัดไป'],
+      ['▣','กล่องจะให้ทอง ยาแดง หรือพลังโจมตี'],
+      ['⚔','ชนมอนสเตอร์เพื่อเริ่มฉะกัน'],
+      ['','โจมตีเพื่อทอยเต๋า · ยิงเวทเพื่อใช้ MP ·'],
+      ['','กินยาเพื่อเพิ่มเลือด · เผ่นเพื่อชิ่งหนีเอาชีวิตรอด'],
+      ['‼','คอยดูเกจจารย์มองด้านบน ถ้ามันใกล้เต็ม'],
+      ['','ให้รีบกด \'ซ่อนด่วน!\' หรือปัดจอลง'],
+      ['','เพื่อเอาสมุดบัง ไม่งั้นโดนยึดชัวร์!'],
+      ['✓','เกมเซฟเองตลอดเวลา ปิดแล้วกลับมาเล่นต่อเมื่อไหร่ก็ได้']
     ];
     let y=PAPER.y+128; const lx=PAPER.x+34;
     for(let i=0;i<lines.length;i++){
@@ -992,13 +1074,13 @@
       pencilText(lines[i][1], lx+44, y, 21, COL.graphite,'left',i+9);
       y += lines[i][0] ? 44 : 30;
     }
-    btnBig('back', S._helpFrom==='field'?'BACK':'GOT IT — START', PAPER.y+PAPER.h-96);
+    btnBig('back', S._helpFrom==='field'?'ย้อนกลับ':'เข้าใจแล้ว — ลุย!', PAPER.y+PAPER.h-96);
   }
 
   function drawAudioBtn(){
     const x=W-44, y=14, s=30;
     ctx.fillStyle='rgba(0,0,0,0.25)'; roundRect(x,y,s,s,6); ctx.fill();
-    ctx.fillStyle='#e9ece4'; ctx.font='16px "Special Elite",monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='#e9ece4'; ctx.font='16px "Sarabun", "Noto Sans Thai", "Sukhumvit Set", "Thonburi", monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText(Audio2.on?'♪':'×', x+s/2, y+s/2+1); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
     buttons.push({id:'mute',x:x,y:y,w:s,h:s});
   }
@@ -1070,6 +1152,7 @@
   function boot(){
     resize();
     loadAssets();
+    try{['Itim','Sarabun'].forEach(function(f){document.fonts.load('400 24px "'+f+'"');document.fonts.load('700 40px "'+f+'"');});}catch(e){}
     S = { scene:'title', teacher:{meter:0,alert:false}, p:freshPlayer(), depth:1, rumor:pick(RUMORS) };
     document.getElementById('boot').style.display='none';
     requestAnimationFrame(loop);
